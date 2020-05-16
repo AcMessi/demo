@@ -65,21 +65,37 @@ public class App {
 			}
 		});
 
-		// transaction3
-		cachedThreadPool.execute(new Runnable() {
-			public void run() {
-				System.out.println(Thread.currentThread().getName() + "开始执行");
-				app.saveTrade(3l, 3l, "INF", 70, TradeUtil.ACTION_TYPE_INSERT, TradeUtil.TRADE_TYPE_BUY);
-			}
-		});
-
-		// transaction4
-		cachedThreadPool.execute(new Runnable() {
-			public void run() {
-				System.out.println(Thread.currentThread().getName() + "开始执行");
-				app.saveTrade(4l, 1l, "REL", 60, TradeUtil.ACTION_TYPE_UPDATE, TradeUtil.TRADE_TYPE_BUY);
-			}
-		});
+//		// transaction3
+//		cachedThreadPool.execute(new Runnable() {
+//			public void run() {
+//				System.out.println(Thread.currentThread().getName() + "开始执行");
+//				app.saveTrade(3l, 3l, "INF", 70, TradeUtil.ACTION_TYPE_INSERT, TradeUtil.TRADE_TYPE_BUY);
+//			}
+//		});
+//
+//		// transaction4
+//		cachedThreadPool.execute(new Runnable() {
+//			public void run() {
+//				System.out.println(Thread.currentThread().getName() + "开始执行");
+//				app.saveTrade(4l, 1l, "REL", 60, TradeUtil.ACTION_TYPE_UPDATE, TradeUtil.TRADE_TYPE_BUY);
+//			}
+//		});
+//
+//		// transaction2
+//		cachedThreadPool.execute(new Runnable() {
+//			public void run() {
+//				System.out.println(Thread.currentThread().getName() + "开始执行");
+//				app.saveTrade(2l, 2l, "ITC", 40, TradeUtil.ACTION_TYPE_INSERT, TradeUtil.TRADE_TYPE_SELL);
+//			}
+//		});
+//
+//		// transaction3
+//		cachedThreadPool.execute(new Runnable() {
+//			public void run() {
+//				System.out.println(Thread.currentThread().getName() + "开始执行");
+//				app.saveTrade(3l, 3l, "INF", 70, TradeUtil.ACTION_TYPE_INSERT, TradeUtil.TRADE_TYPE_BUY);
+//			}
+//		});
 
 	}
 
