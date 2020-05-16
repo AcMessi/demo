@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.acn.demo.model.Trade;
 
@@ -28,43 +29,20 @@ public class TradeUtil {
 
 	public static List<Long> transactionList = new ArrayList<Long>();
 
-	public static Map<Long, Trade> tradeMap = new LinkedHashMap<Long, Trade>();
+	public static Map<Long, Trade> tradeMap = new ConcurrentHashMap<Long, Trade>();
 
 	public static Map<String, Integer> securityMap = new LinkedHashMap<String, Integer>();
 
-	public static synchronized void saveTrade(Long transactionId, Long tradeId, String securityCode, int quantity,
-			int actionType, int tradeType) {
+	public static void saveTradeMap(Trade trade, Long tradeId, String securityCode, int quantity, int actionType,
+			int tradeType) {
+		if (trade != null) {
+			trade.setVersion(trade.getVersion() + 1); // version自增长1， insert为开始， cancel为结束
 
-		if (!transactionList.contains(transactionId) && transactionId > 0) {
-			transactionList.add(transactionId);
-
-			Trade trade = tradeMap.get(tradeId);
-			boolean flag = true;
-
-			// 交易已cancel时 ： 任何字段都可以更新，但应该被无视
-			if (trade != null && trade.getActionType() == ACTION_TYPE_CANCEL) {
-				flag = false;
-			}
-
-			if (trade == null) {
-				// 交易未存在时，进行insert
-				if (actionType == ACTION_TYPE_INSERT) {
-					trade = new Trade();
-				}
-
-				// 交易存在时才能进行update和cancel
-				if (actionType > 1) {
-					flag = false;
-				}
-			}
-
-			if (flag) {
-				trade.setVersion(trade.getVersion() + 1); // version自增长1， insert为开始， cancel为结束
+			if (actionType != ACTION_TYPE_CANCEL) {
 				trade.setSecurityCode(securityCode);
 				trade.setActionType(actionType); // 1：insert 2:update 3:cancel
 				trade.setTradeType(tradeType); // 1：buy 2:sell
 				trade.setQuantity(quantity);
-				tradeMap.put(tradeId, trade);
 
 				int securityCodeVal = securityMap.get(securityCode) == null ? 0
 						: securityMap.get(securityCode).intValue();
@@ -77,8 +55,12 @@ public class TradeUtil {
 					securityMap.put(securityCode, securityCodeVal - quantity);
 				}
 			}
-		}
 
+			tradeMap.put(tradeId, trade);
+		}
+	}
+
+	public static void showResult() {
 		System.out.println(Thread.currentThread().getName() + " Positions : ");
 
 		Iterator<Entry<String, Integer>> entries = securityMap.entrySet().iterator();
