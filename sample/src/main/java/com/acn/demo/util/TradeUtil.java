@@ -8,6 +8,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import org.apache.log4j.Logger;
+
+import com.acn.demo.App;
 import com.acn.demo.model.Trade;
 
 /**
@@ -32,6 +35,8 @@ public class TradeUtil {
 	public static Map<Long, Trade> tradeMap = new HashMap<Long, Trade>();
 
 	public static Map<String, Integer> securityMap = new LinkedHashMap<String, Integer>();
+	
+	private static Logger LOG = Logger.getLogger(TradeUtil.class);
 
 	/**
 	 * save trade data.
@@ -83,14 +88,14 @@ public class TradeUtil {
 	 * @return
 	 */
 	public static void showResult() {
-		System.out.println(Thread.currentThread().getName() + " Positions : ");
+		LOG.info(Thread.currentThread().getName() + " Positions : ");
 
 		Iterator<Entry<String, Integer>> entries = securityMap.entrySet().iterator();
 		while (entries.hasNext()) {
 			Entry<String, Integer> entry = entries.next();
 			String key = entry.getKey();
 			Integer val = entry.getValue();
-			System.out.println(Thread.currentThread().getName() + " : " + key + " " + val);
+			LOG.info(Thread.currentThread().getName() + " : " + key + " " + val);
 		}
 	}
 
