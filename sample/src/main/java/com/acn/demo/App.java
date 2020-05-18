@@ -13,6 +13,9 @@ import com.acn.demo.util.TradeUtil;
  */
 public class App {
 
+	/**
+	 * entry of application
+	 */
 	public static void main(String[] args) {
 		ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
 		final App app = new App();

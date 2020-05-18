@@ -14,6 +14,7 @@ public class TradeUtilTest extends TestCase {
 
 	public void testSaveTradeMapWithNoData() {
 		TradeUtil.saveTradeMap(null, 1l, "REL", 50, TradeUtil.ACTION_TYPE_INSERT, TradeUtil.TRADE_TYPE_BUY);
+		
 		assertEquals(TradeUtil.transactionList.size(), 0);
 		assertEquals(TradeUtil.securityMap.size(), 0);
 		assertEquals(TradeUtil.tradeMap.size(), 0);
@@ -123,13 +124,17 @@ public class TradeUtilTest extends TestCase {
 
 	public void testShowResult() {
 		TradeUtil.securityMap.put("REL", new Integer(50));
+		
 		TradeUtil.showResult();
+		
 		clear();
 	}
 
 	public void testShowResultWithNoData() {
 		TradeUtil.securityMap.put("REL", new Integer(50));
+		
 		TradeUtil.showResult();
+		
 		clear();
 	}
 

@@ -48,8 +48,7 @@ public class TradeUtil {
 			int tradeType) {
 		if (trade != null) {
 			// version starts with 1 and increases by 1
-			// Insert will always be 1st version of a Trade and Cancel will always be last
-			// version of Trade
+			// Insert will always be 1st version of a Trade and Cancel will always be last version of Trade
 			trade.setVersion(trade.getVersion() + 1);
 
 			// for Cancel, any columns can be changed and should be ignored
