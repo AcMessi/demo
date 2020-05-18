@@ -1,12 +1,12 @@
 package com.acn.demo.util;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.concurrent.ConcurrentHashMap;
 
 import com.acn.demo.model.Trade;
 
@@ -29,7 +29,7 @@ public class TradeUtil {
 
 	public static List<Long> transactionList = new ArrayList<Long>();
 
-	public static Map<Long, Trade> tradeMap = new ConcurrentHashMap<Long, Trade>();
+	public static Map<Long, Trade> tradeMap = new HashMap<Long, Trade>();
 
 	public static Map<String, Integer> securityMap = new LinkedHashMap<String, Integer>();
 
@@ -48,7 +48,8 @@ public class TradeUtil {
 			int tradeType) {
 		if (trade != null) {
 			// version starts with 1 and increases by 1
-			// Insert will always be 1st version of a Trade and Cancel will always be last version of Trade
+			// Insert will always be 1st version of a Trade and Cancel will always be last
+			// version of Trade
 			trade.setVersion(trade.getVersion() + 1);
 
 			// for Cancel, any columns can be changed and should be ignored

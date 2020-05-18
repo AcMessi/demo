@@ -23,42 +23,54 @@ public class App {
 		// transaction1
 		cachedThreadPool.execute(new Runnable() {
 			public void run() {
+				System.out.println(Thread.currentThread().getName() + " starts");
 				app.saveTrade(1l, 1l, "REL", 50, TradeUtil.ACTION_TYPE_INSERT, TradeUtil.TRADE_TYPE_BUY);
+				System.out.println(Thread.currentThread().getName() + " ends");
 			}
 		});
 
 		// transaction2
 		cachedThreadPool.execute(new Runnable() {
 			public void run() {
+				System.out.println(Thread.currentThread().getName() + " starts");
 				app.saveTrade(2l, 2l, "ITC", 40, TradeUtil.ACTION_TYPE_INSERT, TradeUtil.TRADE_TYPE_SELL);
+				System.out.println(Thread.currentThread().getName() + " ends");
 			}
 		});
 
 		// transaction3
 		cachedThreadPool.execute(new Runnable() {
 			public void run() {
+				System.out.println(Thread.currentThread().getName() + " starts");
 				app.saveTrade(3l, 3l, "INF", 70, TradeUtil.ACTION_TYPE_INSERT, TradeUtil.TRADE_TYPE_BUY);
+				System.out.println(Thread.currentThread().getName() + " ends");
 			}
 		});
 
 		// transaction4
 		cachedThreadPool.execute(new Runnable() {
 			public void run() {
+				System.out.println(Thread.currentThread().getName() + " starts");
 				app.saveTrade(4l, 1l, "REL", 60, TradeUtil.ACTION_TYPE_UPDATE, TradeUtil.TRADE_TYPE_BUY);
+				System.out.println(Thread.currentThread().getName() + " ends");
 			}
 		});
 
 		// transaction5
 		cachedThreadPool.execute(new Runnable() {
 			public void run() {
+				System.out.println(Thread.currentThread().getName() + " starts");
 				app.saveTrade(5l, 2l, "ITC", 30, TradeUtil.ACTION_TYPE_CANCEL, TradeUtil.TRADE_TYPE_BUY);
+				System.out.println(Thread.currentThread().getName() + " ends");
 			}
 		});
 
 		// transaction6
 		cachedThreadPool.execute(new Runnable() {
 			public void run() {
+				System.out.println(Thread.currentThread().getName() + " starts");
 				app.saveTrade(6l, 4l, "INF", 20, TradeUtil.ACTION_TYPE_INSERT, TradeUtil.TRADE_TYPE_SELL);
+				System.out.println(Thread.currentThread().getName() + " ends");
 			}
 		});
 
@@ -77,8 +89,6 @@ public class App {
 	 */
 	public synchronized void saveTrade(Long transactionId, Long tradeId, String securityCode, int quantity,
 			int actionType, int tradeType) {
-		System.out.println(Thread.currentThread().getName() + " starts");
-		
 		// save data when transactionId is valid and not existed
 		if (!TradeUtil.transactionList.contains(transactionId) && transactionId > 0) {
 			TradeUtil.transactionList.add(transactionId);
@@ -114,7 +124,5 @@ public class App {
 				this.notifyAll();
 			}
 		}
-		
-		System.out.println(Thread.currentThread().getName() + " ends");
 	}
 }
