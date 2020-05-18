@@ -38,6 +38,7 @@ public class TradeUtil {
 		if (trade != null) {
 			trade.setVersion(trade.getVersion() + 1); // version自增长1， insert为开始， cancel为结束
 
+			// 若为cancel操作，则无视其他字段更新
 			if (actionType != ACTION_TYPE_CANCEL) {
 				trade.setSecurityCode(securityCode);
 				trade.setActionType(actionType); // 1：insert 2:update 3:cancel
@@ -47,10 +48,12 @@ public class TradeUtil {
 				int securityCodeVal = securityMap.get(securityCode) == null ? 0
 						: securityMap.get(securityCode).intValue();
 
+				// 交易类型为buy时，相关security code的quantity进行加法计算
 				if (tradeType == TRADE_TYPE_BUY) {
 					securityMap.put(securityCode, securityCodeVal + quantity);
 				}
 
+				// 交易类型为sell时，相关security code的quantity进行减法计算
 				if (tradeType == TRADE_TYPE_SELL) {
 					securityMap.put(securityCode, securityCodeVal - quantity);
 				}

@@ -65,38 +65,6 @@ public class App {
 			}
 		});
 
-//		// transaction3
-//		cachedThreadPool.execute(new Runnable() {
-//			public void run() {
-//				System.out.println(Thread.currentThread().getName() + "开始执行");
-//				app.saveTrade(3l, 3l, "INF", 70, TradeUtil.ACTION_TYPE_INSERT, TradeUtil.TRADE_TYPE_BUY);
-//			}
-//		});
-//
-//		// transaction4
-//		cachedThreadPool.execute(new Runnable() {
-//			public void run() {
-//				System.out.println(Thread.currentThread().getName() + "开始执行");
-//				app.saveTrade(4l, 1l, "REL", 60, TradeUtil.ACTION_TYPE_UPDATE, TradeUtil.TRADE_TYPE_BUY);
-//			}
-//		});
-//
-//		// transaction2
-//		cachedThreadPool.execute(new Runnable() {
-//			public void run() {
-//				System.out.println(Thread.currentThread().getName() + "开始执行");
-//				app.saveTrade(2l, 2l, "ITC", 40, TradeUtil.ACTION_TYPE_INSERT, TradeUtil.TRADE_TYPE_SELL);
-//			}
-//		});
-//
-//		// transaction3
-//		cachedThreadPool.execute(new Runnable() {
-//			public void run() {
-//				System.out.println(Thread.currentThread().getName() + "开始执行");
-//				app.saveTrade(3l, 3l, "INF", 70, TradeUtil.ACTION_TYPE_INSERT, TradeUtil.TRADE_TYPE_BUY);
-//			}
-//		});
-
 	}
 
 	public synchronized void saveTrade(Long transactionId, Long tradeId, String securityCode, int quantity,
@@ -113,6 +81,7 @@ public class App {
 					trade = new Trade();
 				}
 
+				// 交易依然未存在时，则说明当前线程并非insert操作,线程进入等待
 				if (trade == null) {
 					try {
 						this.wait();
@@ -122,9 +91,16 @@ public class App {
 				}
 			}
 
+			// 保存trade数据
 			TradeUtil.saveTradeMap(trade, tradeId, securityCode, quantity, actionType, tradeType);
+
+			// 展示结果
 			TradeUtil.showResult();
-			this.notifyAll();
+
+			// 弱当前线程为insert操作，则唤醒在wait状态的update或cancel线程
+			if (actionType == TradeUtil.ACTION_TYPE_INSERT) {
+				this.notifyAll();
+			}
 		}
 	}
 }
