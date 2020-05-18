@@ -1,5 +1,6 @@
 package com.acn.demo;
 
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -112,28 +113,43 @@ public class AppTest extends TestCase {
 	}
 
 	public void testZSaveTradeForWait() {
-		ExecutorService cachedThreadPool = Executors.newCachedThreadPool();
+		final CountDownLatch latch = new CountDownLatch(2);
+		ExecutorService cachedThreadPool = Executors.newFixedThreadPool(2);
 		final App app = new App();
 
 		// transaction1
 		cachedThreadPool.execute(new Runnable() {
 			public void run() {
-				System.out.println(Thread.currentThread().getName() + "开始执行");
-				app.saveTrade(1l, 1l, "REL", 50, TradeUtil.ACTION_TYPE_UPDATE, TradeUtil.TRADE_TYPE_BUY);
+				try {
+					System.out.println(Thread.currentThread().getName() + "开始执行");
+					app.saveTrade(1l, 1l, "REL", 50, TradeUtil.ACTION_TYPE_UPDATE, TradeUtil.TRADE_TYPE_BUY);
+				} finally {
+					latch.countDown();
+				}
 			}
 		});
 
 		// transaction2
 		cachedThreadPool.execute(new Runnable() {
 			public void run() {
-				System.out.println(Thread.currentThread().getName() + "开始执行");
-				app.saveTrade(2l, 1l, "ITC", 40, TradeUtil.ACTION_TYPE_INSERT, TradeUtil.TRADE_TYPE_SELL);
+				try {
+					System.out.println(Thread.currentThread().getName() + "开始执行");
+					app.saveTrade(2l, 1l, "ITC", 40, TradeUtil.ACTION_TYPE_INSERT, TradeUtil.TRADE_TYPE_SELL);
+				} finally {
+					latch.countDown();
+				}
 			}
 		});
 
-		assertEquals(TradeUtil.transactionList.size(), 1);
-		assertEquals(TradeUtil.securityMap.size(), 0);
-		assertEquals(TradeUtil.tradeMap.size(), 0);
+		try {
+			latch.await();
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+
+		assertEquals(TradeUtil.transactionList.size(), 2);
+		assertEquals(TradeUtil.securityMap.size(), 2);
+		assertEquals(TradeUtil.tradeMap.size(), 1);
 
 		clear();
 	}
