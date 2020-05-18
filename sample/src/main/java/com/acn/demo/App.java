@@ -7,7 +7,7 @@ import com.acn.demo.model.Trade;
 import com.acn.demo.util.TradeUtil;
 
 /**
- * @Description: 入口
+ * @Description: console application
  * @Author: messi.chaoqun.wang
  * @Date: 2020/5/16
  */
@@ -20,7 +20,6 @@ public class App {
 		// transaction1
 		cachedThreadPool.execute(new Runnable() {
 			public void run() {
-				System.out.println(Thread.currentThread().getName() + "开始执行");
 				app.saveTrade(1l, 1l, "REL", 50, TradeUtil.ACTION_TYPE_INSERT, TradeUtil.TRADE_TYPE_BUY);
 			}
 		});
@@ -28,7 +27,6 @@ public class App {
 		// transaction2
 		cachedThreadPool.execute(new Runnable() {
 			public void run() {
-				System.out.println(Thread.currentThread().getName() + "开始执行");
 				app.saveTrade(2l, 2l, "ITC", 40, TradeUtil.ACTION_TYPE_INSERT, TradeUtil.TRADE_TYPE_SELL);
 			}
 		});
@@ -36,7 +34,6 @@ public class App {
 		// transaction3
 		cachedThreadPool.execute(new Runnable() {
 			public void run() {
-				System.out.println(Thread.currentThread().getName() + "开始执行");
 				app.saveTrade(3l, 3l, "INF", 70, TradeUtil.ACTION_TYPE_INSERT, TradeUtil.TRADE_TYPE_BUY);
 			}
 		});
@@ -44,7 +41,6 @@ public class App {
 		// transaction4
 		cachedThreadPool.execute(new Runnable() {
 			public void run() {
-				System.out.println(Thread.currentThread().getName() + "开始执行");
 				app.saveTrade(4l, 1l, "REL", 60, TradeUtil.ACTION_TYPE_UPDATE, TradeUtil.TRADE_TYPE_BUY);
 			}
 		});
@@ -52,7 +48,6 @@ public class App {
 		// transaction5
 		cachedThreadPool.execute(new Runnable() {
 			public void run() {
-				System.out.println(Thread.currentThread().getName() + "开始执行");
 				app.saveTrade(5l, 2l, "ITC", 30, TradeUtil.ACTION_TYPE_CANCEL, TradeUtil.TRADE_TYPE_BUY);
 			}
 		});
@@ -60,15 +55,28 @@ public class App {
 		// transaction6
 		cachedThreadPool.execute(new Runnable() {
 			public void run() {
-				System.out.println(Thread.currentThread().getName() + "开始执行");
 				app.saveTrade(6l, 4l, "INF", 20, TradeUtil.ACTION_TYPE_INSERT, TradeUtil.TRADE_TYPE_SELL);
 			}
 		});
 
 	}
 
+	/**
+	 * save trade data.
+	 *
+	 * @param transactionId primary key
+	 * @param tradeId       trade identifier
+	 * @param securityCode  security identifier
+	 * @param quantity      quantity of security
+	 * @param actionType    type of action
+	 * @param tradeType     type of trade
+	 * @return
+	 */
 	public synchronized void saveTrade(Long transactionId, Long tradeId, String securityCode, int quantity,
 			int actionType, int tradeType) {
+		System.out.println(Thread.currentThread().getName() + " starts");
+		
+		// save data when transactionId is valid and not existed
 		if (!TradeUtil.transactionList.contains(transactionId) && transactionId > 0) {
 			TradeUtil.transactionList.add(transactionId);
 
@@ -77,11 +85,12 @@ public class App {
 				trade = TradeUtil.tradeMap.get(tradeId);
 
 				if (trade == null && actionType == TradeUtil.ACTION_TYPE_INSERT) {
-					// 交易未存在时，进行insert
+					// Insert if the current trade type is Insert and no trade exists with the same tradeId
 					trade = new Trade();
 				}
 
-				// 交易依然未存在时，则说明当前线程并非insert操作,线程进入等待
+				// if the trade is null, the action type of current thread is not Insert
+				// the current thread should be waiting until the Insert is executed with the same tradeId
 				if (trade == null) {
 					try {
 						this.wait();
@@ -91,16 +100,18 @@ public class App {
 				}
 			}
 
-			// 保存trade数据
+			// save the data of trade
 			TradeUtil.saveTradeMap(trade, tradeId, securityCode, quantity, actionType, tradeType);
 
-			// 展示结果
+			// show results
 			TradeUtil.showResult();
 
-			// 弱当前线程为insert操作，则唤醒在wait状态的update或cancel线程
+			// notify the threads which represent Update or Cancel if the current thread is Insert
 			if (actionType == TradeUtil.ACTION_TYPE_INSERT) {
 				this.notifyAll();
 			}
 		}
+		
+		System.out.println(Thread.currentThread().getName() + " ends");
 	}
 }

@@ -1,24 +1,45 @@
 package com.acn.demo.model;
 
 /**
- * @Description: trade实体类
+ * @Description: the model of trade
  * @Author: messi.chaoqun.wang
  * @Date: 2020/5/16
  */
 public class Trade {
 
+	/**
+	 * primary key
+	 */
 	private long transactionId;
 
+	/**
+	 * trade identifier
+	 */
 	private long tradeId;
 
+	/**
+	 * version : start with 1s
+	 */
 	private int version;
 
+	/**
+	 * security identifier
+	 */
 	private String securityCode;
 
+	/**
+	 * quantity of security
+	 */
 	private int quantity;
 
+	/**
+	 * type of action
+	 */
 	private int actionType;
 
+	/**
+	 * type of trade
+	 */
 	private int tradeType;
 
 	public long getTransactionId() {

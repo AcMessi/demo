@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import com.acn.demo.model.Trade;
 
 /**
- * @Description: trade工具类
+ * @Description: trade utility class
  * @Author: messi.chaoqun.wang
  * @Date: 2020/5/16
  */
@@ -33,12 +33,26 @@ public class TradeUtil {
 
 	public static Map<String, Integer> securityMap = new LinkedHashMap<String, Integer>();
 
+	/**
+	 * save trade data.
+	 *
+	 * @param trade        Trade instance
+	 * @param tradeId      trade identifier
+	 * @param securityCode security identifier
+	 * @param quantity     quantity of security
+	 * @param actionType   type of action
+	 * @param tradeType    type of trade
+	 * @return
+	 */
 	public static void saveTradeMap(Trade trade, Long tradeId, String securityCode, int quantity, int actionType,
 			int tradeType) {
 		if (trade != null) {
-			trade.setVersion(trade.getVersion() + 1); // version自增长1， insert为开始， cancel为结束
+			// version starts with 1 and increases by 1
+			// Insert will always be 1st version of a Trade and Cancel will always be last
+			// version of Trade
+			trade.setVersion(trade.getVersion() + 1);
 
-			// 若为cancel操作，则无视其他字段更新
+			// for Cancel, any columns can be changed and should be ignored
 			if (actionType != ACTION_TYPE_CANCEL) {
 				trade.setSecurityCode(securityCode);
 				trade.setActionType(actionType); // 1：insert 2:update 3:cancel
@@ -48,12 +62,12 @@ public class TradeUtil {
 				int securityCodeVal = securityMap.get(securityCode) == null ? 0
 						: securityMap.get(securityCode).intValue();
 
-				// 交易类型为buy时，相关security code的quantity进行加法计算
+				// when trade type is Buy, the quantity of security code should be added
 				if (tradeType == TRADE_TYPE_BUY) {
 					securityMap.put(securityCode, securityCodeVal + quantity);
 				}
 
-				// 交易类型为sell时，相关security code的quantity进行减法计算
+				// when trade type is Sell, the quantity of security code should be subtracted
 				if (tradeType == TRADE_TYPE_SELL) {
 					securityMap.put(securityCode, securityCodeVal - quantity);
 				}
@@ -63,6 +77,11 @@ public class TradeUtil {
 		}
 	}
 
+	/**
+	 * show results of trade.
+	 *
+	 * @return
+	 */
 	public static void showResult() {
 		System.out.println(Thread.currentThread().getName() + " Positions : ");
 
