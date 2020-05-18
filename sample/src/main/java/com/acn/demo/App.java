@@ -65,7 +65,7 @@ public class App {
 	}
 
 	/**
-	 * save trade data.
+	 * save trade data and show result after each transaction
 	 *
 	 * @param transactionId primary key
 	 * @param tradeId       trade identifier
