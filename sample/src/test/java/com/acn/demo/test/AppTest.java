@@ -1,4 +1,4 @@
-package com.acn.demo;
+package com.acn.demo.test;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -7,6 +7,7 @@ import java.util.concurrent.Executors;
 import org.junit.FixMethodOrder;
 import org.junit.runners.MethodSorters;
 
+import com.acn.demo.App;
 import com.acn.demo.model.Trade;
 import com.acn.demo.util.TradeUtil;
 
